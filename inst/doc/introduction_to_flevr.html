@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Brian D. Williamson" />
+
+
+<title>Introduction to flevr</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to <code>flevr</code></h1>
+<h4 class="author">Brian D. Williamson</h4>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(flevr)</span></code></pre></div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p><code>flevr</code> is a <code>R</code> package for doing variable
+selection based on flexible ensembles. The package provides functions
+for extrinsic variable selection using the <a href="https://github.com/ecpolley/SuperLearner">Super Learner</a> and
+for intrinsic variable selection using the Shapley Population Variable
+Importance Measure (<a href="https://github.com/bdwilliamson/vimp">SPVIM</a>).</p>
+<p>The author and maintainer of the <code>flevr</code> package is <a href="https://bdwilliamson.github.io">Brian Williamson</a>. For details
+on the method, check out our preprint.</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install a development release of <code>flevr</code> from
+GitHub via <code>devtools</code> by running the following code:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># install devtools if you haven&#39;t already</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co"># install.packages(&quot;devtools&quot;, repos = &quot;https://cloud.r-project.org&quot;)</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">&quot;bdwilliamson/flevr&quot;</span>)</span></code></pre></div>
+</div>
+<div id="quick-start" class="section level2">
+<h2>Quick start</h2>
+<p>This section should serve as a quick guide to using the
+<code>flevr</code> package — we will cover the main functions for doing
+extrinsic and intrinsic variable selection using a simulated data
+example. More details are given in the specific vignettes for <a href="extrinsic_selection.html">extrinsic selection</a> and <a href="intrinsic_selection.html">intrinsic selection</a>.</p>
+<p>First, we create some data:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># generate the data -- note that this is a simple setting, for speed</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># generate features</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">replicate</span>(p, stats<span class="sc">::</span><span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>x_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(x)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>x_names <span class="ot">&lt;-</span> <span class="fu">names</span>(x_df)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co"># generate outcomes</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> x[, <span class="dv">1</span>] <span class="sc">+</span> <span class="fl">0.75</span> <span class="sc">*</span> x[, <span class="dv">2</span>] <span class="sc">+</span> stats<span class="sc">::</span><span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">1</span>)</span></code></pre></div>
+<p>This creates a matrix of covariates <code>x</code> with 2 columns and
+a vector <code>y</code> of normally-distributed outcome values for a
+sample of <code>n = 500</code> study participants.</p>
+<p>There are two main types of variable selection available in
+<code>flevr</code>: extrinsic and intrinsic. Extrinsic selection is the
+most common type of variable selection: in this approach, a given
+algorithm (and perhaps its associated algorithm-specific variable
+importance) is used for variable selection. The lasso is a widely-used
+example of extrinsic selection. Intrinsic selection, on the other hand,
+uses estimated intrinsic variable importance (a population quantity) to
+perform variable selection. This intrinsic importance is both defined
+and estimated in a model-agnostic manner.</p>
+<div id="extrinsic-variable-selection" class="section level3">
+<h3>Extrinsic variable selection</h3>
+<p>We recommend using the Super Learner <span class="citation">(<strong>ref?</strong>)</span>(vanderlaan2007) to do
+extrinsic variable selection to protect against model misspecification;
+more details on this procedure are available in the vignette on <a href="extrinsic_selection.html">extrinsic selection</a>. This requires
+specifying a <em>library</em> of <em>candidate learners</em> (e.g.,
+lasso, random forests). We can do this in <code>flevr</code> using the
+following code:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># fit a Super Learner ensemble; note its simplicity, for speed</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;SuperLearner&quot;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>learners <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;SL.glm&quot;</span>, <span class="st">&quot;SL.mean&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>fit <span class="ot">&lt;-</span> SuperLearner<span class="sc">::</span><span class="fu">SuperLearner</span>(<span class="at">Y =</span> y, <span class="at">X =</span> x_df,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>                                  <span class="at">SL.library =</span> learners,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>                                  <span class="at">cvControl =</span> <span class="fu">list</span>(<span class="at">V =</span> V))</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># extract importance based on the whole Super Learner</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>sl_importance_all <span class="ot">&lt;-</span> <span class="fu">extract_importance_SL</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>  <span class="at">fit =</span> fit, <span class="at">feature_names =</span> x_names, <span class="at">import_type =</span> <span class="st">&quot;all&quot;</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>)</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>sl_importance_all</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 2</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt;   feature  rank</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt;</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; 1 V2       1.01</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; 2 V1       1.99</span></span></code></pre></div>
+<p>These results suggest that feature 2 is more important than feature 1
+within the Super Learner ensemble (since a lower rank is better). If we
+want to scrutinize the importance of features within the best-fitting
+algorithm in the Super Learner ensemble, we can do the following:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>sl_importance_best <span class="ot">&lt;-</span> <span class="fu">extract_importance_SL</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">fit =</span> fit, <span class="at">feature_names =</span> x_names, <span class="at">import_type =</span> <span class="st">&quot;best&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>sl_importance_best</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 2</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;   feature  rank</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;int&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 1 V2          1</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; 2 V1          2</span></span></code></pre></div>
+<p>Finally, to do variable selection, we need to select a threshold
+(ideally before looking at the data). In this case, since there are only
+two variables, we choose a threshold of 1.5, which means we will select
+only one variable:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>extrinsic_selected <span class="ot">&lt;-</span> <span class="fu">extrinsic_selection</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="at">fit =</span> fit, <span class="at">feature_names =</span> x_names, <span class="at">threshold =</span> <span class="fl">1.5</span>, <span class="at">import_type =</span> <span class="st">&quot;all&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>)</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>extrinsic_selected</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 3</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt;   feature  rank selected</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;lgl&gt;   </span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; 1 V2       1.01 TRUE    </span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; 2 V1       1.99 FALSE</span></span></code></pre></div>
+<p>In this case, we select only variable 2.</p>
+</div>
+<div id="intrinsic-variable-selection" class="section level3">
+<h3>Intrinsic variable selection</h3>
+<p>Intrinsic variable selection is based on population variable
+importance <span class="citation">(<strong>ref?</strong>)</span>(williamson2020c); more
+details on this procedure are available in the vignette on <a href="intrinsic_selection.html">intrinsic selection</a>. Intrinsic
+selection also uses the Super Learner under the hood, and requires
+specifying a useful <em>measure of predictiveness</em> (e.g., R-squared
+or classification accuracy). The first step in doing intrinsic selection
+is estimating the variable importance:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># set up a library for SuperLearner</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>learners <span class="ot">&lt;-</span> <span class="st">&quot;SL.glm&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>univariate_learners <span class="ot">&lt;-</span> <span class="st">&quot;SL.glm&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co"># estimate the SPVIMs</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;vimp&quot;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="fu">sp_vim</span>(<span class="at">Y =</span> y, <span class="at">X =</span> x, <span class="at">V =</span> V, <span class="at">type =</span> <span class="st">&quot;r_squared&quot;</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>              <span class="at">SL.library =</span> learners, <span class="at">gamma =</span> .<span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">delta =</span> <span class="dv">0</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>              <span class="at">cvControl =</span> <span class="fu">list</span>(<span class="at">V =</span> V), <span class="at">env =</span> <span class="fu">environment</span>())</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>)</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>est</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; Variable importance estimates:</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt;       Estimate  SE         95% CI                  VIMP &gt; 0 p-value     </span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; s = 1 0.1515809 0.06090463 [0.03221005, 0.2709518] TRUE     1.330062e-03</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; s = 2 0.2990449 0.06565597 [0.17036157, 0.4277282] TRUE     6.863052e-09</span></span></code></pre></div>
+<p>This procedure again shows (correctly) that variable 2 is more
+important than variable 1 in this population.</p>
+<p>The next step is to choose an error rate to control and a method for
+controlling the family-wise error rate. Here, we choose the generalized
+family-wise error rate to control overall and choose Holm-adjusted
+p-values to control the individual family-wise error rate:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>intrinsic_set <span class="ot">&lt;-</span> <span class="fu">intrinsic_selection</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">spvim_ests =</span> est, <span class="at">sample_size =</span> n, <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">feature_names =</span> x_names,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>( <span class="at">quantity =</span> <span class="st">&quot;gFWER&quot;</span>, <span class="at">base_method =</span> <span class="st">&quot;Holm&quot;</span>, <span class="at">k =</span> <span class="dv">1</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>intrinsic_set</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt;   feature   est       p_value adjusted_p_value  rank selected</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;   </span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; 1 V1      0.152 0.00133           0.00133          2 TRUE    </span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; 2 V2      0.299 0.00000000686     0.0000000137     1 TRUE</span></span></code></pre></div>
+<p>In this case, we select both variables.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
