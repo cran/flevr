@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -54,35 +54,35 @@ extrinsic_selected
 n_imp <- 2
 
 ## ----impute, eval = FALSE-----------------------------------------------------
-#  library("mice")
-#  set.seed(20231121)
-#  mi_biomarkers <- mice::mice(data = biomarkers, m = n_imp, printFlag = FALSE)
-#  imputed_biomarkers <- mice::complete(mi_biomarkers, action = "long") %>%
-#    rename(imp = .imp, id = .id)
+# library("mice")
+# set.seed(20231121)
+# mi_biomarkers <- mice::mice(data = biomarkers, m = n_imp, printFlag = FALSE)
+# imputed_biomarkers <- mice::complete(mi_biomarkers, action = "long") %>%
+#   rename(imp = .imp, id = .id)
 
 ## ----extrinsic-selection-with-missing-data, eval = FALSE----------------------
-#  set.seed(20231121)
-#  # set up a list to collect selected sets
-#  all_selected_vars <- vector("list", length = 5)
-#  # for each imputed dataset, do extrinsic selection
-#  for (i in 1:n_imp) {
-#    # fit a Super Learner
-#    these_data <- imputed_biomarkers %>%
-#      filter(imp == i)
-#    this_y <- these_data$mucinous
-#    this_x <- these_data %>%
-#      select(starts_with("lab"), starts_with("cea"))
-#    this_x_df <- as.data.frame(this_x)
-#    fit <- SuperLearner::SuperLearner(Y = this_y, X = this_x_df,
-#                                    SL.library = learners,
-#                                    cvControl = list(V = V),
-#                                    family = "binomial")
-#    # do extrinsic selection
-#    all_selected_vars[[i]] <- extrinsic_selection(
-#      fit = fit, feature_names = x_names, threshold = 5, import_type = "all"
-#    )$selected
-#  }
-#  # perform extrinsic variable selection
-#  selected_vars <- pool_selected_sets(sets = all_selected_vars, threshold = 1 / n_imp)
-#  x_names[selected_vars]
+# set.seed(20231121)
+# # set up a list to collect selected sets
+# all_selected_vars <- vector("list", length = 5)
+# # for each imputed dataset, do extrinsic selection
+# for (i in 1:n_imp) {
+#   # fit a Super Learner
+#   these_data <- imputed_biomarkers %>%
+#     filter(imp == i)
+#   this_y <- these_data$mucinous
+#   this_x <- these_data %>%
+#     select(starts_with("lab"), starts_with("cea"))
+#   this_x_df <- as.data.frame(this_x)
+#   fit <- SuperLearner::SuperLearner(Y = this_y, X = this_x_df,
+#                                   SL.library = learners,
+#                                   cvControl = list(V = V),
+#                                   family = "binomial")
+#   # do extrinsic selection
+#   all_selected_vars[[i]] <- extrinsic_selection(
+#     fit = fit, feature_names = x_names, threshold = 5, import_type = "all"
+#   )$selected
+# }
+# # perform extrinsic variable selection
+# selected_vars <- pool_selected_sets(sets = all_selected_vars, threshold = 1 / n_imp)
+# x_names[selected_vars]
 

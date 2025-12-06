@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -8,9 +8,9 @@ knitr::opts_chunk$set(
 library(flevr)
 
 ## ----install, eval = FALSE----------------------------------------------------
-#  # install devtools if you haven't already
-#  # install.packages("devtools", repos = "https://cloud.r-project.org")
-#  devtools::install_github(repo = "bdwilliamson/flevr")
+# # install devtools if you haven't already
+# # install.packages("devtools", repos = "https://cloud.r-project.org")
+# devtools::install_github(repo = "bdwilliamson/flevr")
 
 ## ----gen-data-----------------------------------------------------------------
 # generate the data -- note that this is a simple setting, for speed

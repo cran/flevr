@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -148,6 +148,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 div.csl-bib-body { }
 div.csl-entry {
 clear: both;
+margin-bottom: 0em;
 }
 .hanging div.csl-entry {
 margin-left:2em;
@@ -427,7 +428,7 @@ only; in practice, I suggest using a large library of learners).</p>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co"># estimate the SPVIMs</span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;SuperLearner&quot;</span>)</span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;vimp&quot;</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; vimp version 2.3.1: Perform Inference on Algorithm-Agnostic Variable Importance</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; vimp version 2.3.7: Perform Inference on Algorithm-Agnostic Variable Importance</span></span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(</span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  <span class="fu">sp_vim</span>(<span class="at">Y =</span> y_cc, <span class="at">X =</span> x_cc, <span class="at">V =</span> V, <span class="at">type =</span> <span class="st">&quot;auc&quot;</span>,</span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>              <span class="at">SL.library =</span> learners, <span class="at">gamma =</span> .<span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">delta =</span> <span class="dv">0</span>,</span>
@@ -447,7 +448,7 @@ only; in practice, I suggest using a large library of learners).</p>
 <span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="co">#&gt; s = 9  0.000000e+00 0.05425335 [0, 0.10041316] FALSE    0.5000000</span></span>
 <span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a><span class="co">#&gt; s = 10 2.070649e-02 0.07993317 [0, 0.17737263] FALSE    0.4492960</span></span>
 <span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="co">#&gt; s = 11 0.000000e+00 0.04733026 [0, 0.09196796] FALSE    0.5000000</span></span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#&gt; s = 12 0.000000e+00 0.05157831 [0, 0.10109163] FALSE    0.5000000</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#&gt; s = 12 7.632783e-17 0.05157831 [0, 0.10109163] FALSE    0.5000000</span></span>
 <span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="co">#&gt; s = 13 6.410256e-03 0.02006046 [0, 0.04572804] FALSE    0.4832894</span></span>
 <span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a><span class="co">#&gt; s = 14 0.000000e+00 0.06751652 [0, 0.12712006] FALSE    0.5000000</span></span>
 <span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="co">#&gt; s = 15 0.000000e+00 0.04733026 [0, 0.09196796] FALSE    0.5000000</span></span>
@@ -469,16 +470,16 @@ p-values to control the individual family-wise error rate:</p>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 21 × 6</span></span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt;    feature                       est p_value adjusted_p_value  rank selected</span></span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                       &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;   </span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt;  1 lab1_actb               0           0.5                  1    14 FALSE   </span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;  2 lab1_molecules_score    0.0422      0.413                1     1 TRUE    </span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt;  3 lab1_telomerase_score   0           0.5                  1    14 FALSE   </span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;  4 lab2_fluorescence_score 0           0.5                  1    14 FALSE   </span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;  5 lab3_muc3ac_score       0.0000619   0.500                1     6 FALSE   </span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt;  6 lab3_muc5ac_score       0           0.5                  1    14 FALSE   </span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt;  7 lab4_areg_score         0           0.5                  1    14 FALSE   </span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt;  8 lab4_glucose_score      0.00775     0.482                1     3 FALSE   </span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt;  9 lab5_mucinous_call      0           0.5                  1    14 FALSE   </span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; 10 lab5_neoplasia_v1_call  0.0207      0.449                1     2 FALSE   </span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt;  1 lab1_actb               0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;  2 lab1_molecules_score    0.0422      0.413                1   1   TRUE    </span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt;  3 lab1_telomerase_score   0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;  4 lab2_fluorescence_score 0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;  5 lab3_muc3ac_score       0.0000619   0.500                1   6   FALSE   </span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt;  6 lab3_muc5ac_score       0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt;  7 lab4_areg_score         0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt;  8 lab4_glucose_score      0.00775     0.482                1   3   FALSE   </span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt;  9 lab5_mucinous_call      0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; 10 lab5_neoplasia_v1_call  0.0207      0.449                1   2   FALSE   </span></span>
 <span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; # ℹ 11 more rows</span></span></code></pre></div>
 <p>I could also choose to control the false discovery rate (FDR), again
 using Holm-adjusted p-values to control the individual family-wise error
@@ -491,16 +492,16 @@ rate:</p>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; # A tibble: 21 × 6</span></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;    feature                       est p_value adjusted_p_value  rank selected</span></span>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                       &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;   </span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;  1 lab1_actb               0           0.5                  1    14 FALSE   </span></span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;  2 lab1_molecules_score    0.0422      0.413                1     1 FALSE   </span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;  3 lab1_telomerase_score   0           0.5                  1    14 FALSE   </span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;  4 lab2_fluorescence_score 0           0.5                  1    14 FALSE   </span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;  5 lab3_muc3ac_score       0.0000619   0.500                1     6 FALSE   </span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt;  6 lab3_muc5ac_score       0           0.5                  1    14 FALSE   </span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt;  7 lab4_areg_score         0           0.5                  1    14 FALSE   </span></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt;  8 lab4_glucose_score      0.00775     0.482                1     3 FALSE   </span></span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt;  9 lab5_mucinous_call      0           0.5                  1    14 FALSE   </span></span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; 10 lab5_neoplasia_v1_call  0.0207      0.449                1     2 FALSE   </span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;  1 lab1_actb               0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;  2 lab1_molecules_score    0.0422      0.413                1   1   FALSE   </span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;  3 lab1_telomerase_score   0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;  4 lab2_fluorescence_score 0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;  5 lab3_muc3ac_score       0.0000619   0.500                1   6   FALSE   </span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt;  6 lab3_muc5ac_score       0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt;  7 lab4_areg_score         0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt;  8 lab4_glucose_score      0.00775     0.482                1   3   FALSE   </span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt;  9 lab5_mucinous_call      0           0.500                1  14.5 FALSE   </span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; 10 lab5_neoplasia_v1_call  0.0207      0.449                1   2   FALSE   </span></span>
 <span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; # ℹ 11 more rows</span></span></code></pre></div>
 </div>
 <div id="intrinsic-selection-with-missing-data" class="section level2">
@@ -543,7 +544,7 @@ family-wise error rate.</p>
 <p>We select five variables, here those with the top-5 estimated
 variable importance. The point estimates and p-values have been computed
 using Rubin’s rules.</p>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-mice" class="csl-entry">
 Buuren, S van, K Groothuis-Oudshoorn, and others. 2023. <em><span class="nocase">mice</span>: Multivariate Imputation by Chained
 Equations</em>. <a href="https://CRAN.R-project.org/package=mice">https://CRAN.R-project.org/package=mice</a>.
